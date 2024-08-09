@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectBot, Start, Update } from 'nestjs-telegraf';
+import { InjectBot, On, Start, Update } from 'nestjs-telegraf';
 import { Context, Telegraf } from 'telegraf';
 
 @Injectable()
@@ -16,6 +16,15 @@ export class TelegramService {
   @Start()
   async startCommand(ctx: Context) {
     await ctx.reply(`Привет, ${ctx.message.from.first_name}!`);
+  }
+
+  @On('text')
+  async sendMessageNotion(ctx: Context) {
+    const message = ctx.text;
+    const chatId = ctx.chat.id;
+    // TODO: передать сообщение в notion
+
+    await this.bot.telegram.sendMessage(chatId, message);
   }
 
   async sendMessage(chatId: string, text: string) {
