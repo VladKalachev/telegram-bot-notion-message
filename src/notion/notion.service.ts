@@ -2,18 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { Client } from '@notionhq/client';
-import { TelegramService } from 'src/telegram/telegram.service';
 
 @Injectable()
 export class NotionService {
   private readonly notion: Client;
   private readonly logger = new Logger(NotionService.name);
-  private sentMessages: Set<string> = new Set();
 
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly telegramService: TelegramService,
-  ) {
+  constructor(private readonly configService: ConfigService) {
     const notionToken = this.configService.get<string>('NOTION_API_KEY');
     if (!notionToken) {
       this.logger.error('NOTION_API_KEY is not defined');
@@ -22,8 +17,6 @@ export class NotionService {
 
     this.notion = new Client({ auth: notionToken });
     this.logger.log('Notion client initialized');
-
-    this.setMessage('text');
   }
 
   async setMessage(text: string) {
